@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { RiShoppingBagLine, RiHeartLine, RiMenuLine } from 'react-icons/ri';
 import { motion } from 'framer-motion';
-import './header.css';
+import './header.scss';
 
 import { Container, Row } from 'reactstrap';
 import logo from '../../assets/images/eco-logo.png';
@@ -24,8 +24,29 @@ const nav__links = [
 ];
 
 const Header = () => {
+	const headerRef = useRef(null);
+	const menuRef = useRef(null);
+
+	const stikyHeaderFunc = () => {
+		window.addEventListener('scroll', () => {
+			if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+				headerRef.current.classList.add('sticky__header');
+			} else {
+				headerRef.current.classList.remove('sticky__header');
+			}
+		});
+	};
+
+	useEffect(() => {
+		stikyHeaderFunc();
+
+		return () => window.removeEventListener('scroll', stikyHeaderFunc);
+	});
+
+	const menuToggle = () => menuRef.current.classList.toggle('active__menu');
+
 	return (
-		<header className='header'>
+		<header className='header' ref={headerRef}>
 			<Container>
 				<Row>
 					<div className='nav__wrapper'>
@@ -35,7 +56,7 @@ const Header = () => {
 								<h1>Multimart</h1>
 							</div>
 						</Link>
-						<div className='navigation'>
+						<div className='navigation' ref={menuRef} onClick={menuToggle}>
 							<ul className='menu'>
 								{nav__links.map((item, index) => (
 									<li className='nav__item' key={index}>
@@ -60,12 +81,11 @@ const Header = () => {
 							<span>
 								<motion.img whileTap={{ scale: 1.2 }} src={userIcon} alt='User' />
 							</span>
-						</div>
-
-						<div className='mobile__menu'>
-							<span>
-								<RiMenuLine />
-							</span>
+							<div className='mobile__menu'>
+								<span onClick={menuToggle}>
+									<RiMenuLine className='mobile__menu-icon' />
+								</span>
+							</div>
 						</div>
 					</div>
 				</Row>

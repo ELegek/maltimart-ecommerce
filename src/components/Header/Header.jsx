@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { RiShoppingBagLine, RiHeartLine, RiMenuLine } from 'react-icons/ri';
 import { motion } from 'framer-motion';
@@ -25,7 +25,31 @@ const nav__links = [
 
 const Header = () => {
 	const headerRef = useRef(null);
-	const menuRef = useRef(null);
+	const openRef = useRef();
+	const [open, setOpen] = useState(false);
+
+	const openMenu = () => {
+		setOpen(true);
+		document.body.classList.add('no-scroll');
+	};
+
+	const closeMenu = () => {
+		setOpen(false);
+		document.body.classList.remove('no-scroll');
+	};
+
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (event.target === openRef.current) {
+				closeMenu();
+			}
+		};
+		document.body.addEventListener('click', handleClickOutside);
+
+		return () => {
+			document.body.removeEventListener('click', handleClickOutside);
+		};
+	}, []);
 
 	const stikyHeaderFunc = () => {
 		window.addEventListener('scroll', () => {
@@ -40,10 +64,10 @@ const Header = () => {
 	useEffect(() => {
 		stikyHeaderFunc();
 
-		return () => window.removeEventListener('scroll', stikyHeaderFunc);
-	});
-
-	const menuToggle = () => menuRef.current.classList.toggle('active__menu');
+		return () => {
+			window.removeEventListener('scroll', stikyHeaderFunc);
+		};
+	}, []);
 
 	return (
 		<header className='header' ref={headerRef}>
@@ -56,11 +80,12 @@ const Header = () => {
 								<h1>Multimart</h1>
 							</div>
 						</Link>
-						<div className='navigation' ref={menuRef} onClick={menuToggle}>
+						<div ref={openRef} className={open ? 'navigation active__menu' : 'navigation'}>
 							<ul className='menu'>
 								{nav__links.map((item, index) => (
 									<li className='nav__item' key={index}>
 										<NavLink
+											onClick={closeMenu}
 											to={item.path}
 											className={(navClass) => (navClass.isActive ? 'nav__active' : '')}>
 											{item.display}
@@ -82,7 +107,7 @@ const Header = () => {
 								<motion.img whileTap={{ scale: 1.2 }} src={userIcon} alt='User' />
 							</span>
 							<div className='mobile__menu'>
-								<span onClick={menuToggle}>
+								<span onClick={openMenu}>
 									<RiMenuLine className='mobile__menu-icon' />
 								</span>
 							</div>

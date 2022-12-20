@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RiShoppingBagLine, RiHeartLine, RiMenuLine } from 'react-icons/ri';
 import { motion } from 'framer-motion';
@@ -27,6 +27,7 @@ const nav__links = [
 const Header = () => {
 	const headerRef = useRef(null);
 	const openRef = useRef();
+	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
 	const totalQuantity = useSelector((state) => state.cart.totalQuantity);
 
@@ -52,6 +53,10 @@ const Header = () => {
 			document.body.removeEventListener('click', handleClickOutside);
 		};
 	}, []);
+
+	const navigateToCart = () => {
+		navigate('/cart');
+	};
 
 	// const stikyHeaderFunc = () => {
 	// 	window.addEventListener('scroll', () => {
@@ -101,7 +106,7 @@ const Header = () => {
 								<RiHeartLine className='ri__icon' />
 								<span className='badge'>1</span>
 							</span>
-							<span className='cart__icon'>
+							<span className='cart__icon' onClick={navigateToCart}>
 								<RiShoppingBagLine className='ri__icon' />
 								<span className='badge'>{totalQuantity}</span>
 							</span>

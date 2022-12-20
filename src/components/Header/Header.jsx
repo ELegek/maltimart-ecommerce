@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { RiShoppingBagLine, RiHeartLine, RiMenuLine } from 'react-icons/ri';
 import { motion } from 'framer-motion';
 import './header.scss';
@@ -27,6 +28,7 @@ const Header = () => {
 	const headerRef = useRef(null);
 	const openRef = useRef();
 	const [open, setOpen] = useState(false);
+	const totalQuantity = useSelector((state) => state.cart.totalQuantity);
 
 	const openMenu = () => {
 		setOpen(true);
@@ -51,23 +53,23 @@ const Header = () => {
 		};
 	}, []);
 
-	const stikyHeaderFunc = () => {
-		window.addEventListener('scroll', () => {
-			if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
-				headerRef.current.classList.add('sticky__header');
-			} else {
-				headerRef.current.classList.remove('sticky__header');
-			}
-		});
-	};
+	// const stikyHeaderFunc = () => {
+	// 	window.addEventListener('scroll', () => {
+	// 		if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+	// 			headerRef.current.classList.add('sticky__header');
+	// 		} else {
+	// 			headerRef.current.classList.remove('sticky__header');
+	// 		}
+	// 	});
+	// };
 
-	useEffect(() => {
-		stikyHeaderFunc();
+	// useEffect(() => {
+	// 	stikyHeaderFunc();
 
-		return () => {
-			window.removeEventListener('scroll', stikyHeaderFunc);
-		};
-	}, []);
+	// 	return () => {
+	// 		window.removeEventListener('scroll', stikyHeaderFunc);
+	// 	};
+	// }, []);
 
 	return (
 		<header className='header' ref={headerRef}>
@@ -101,7 +103,7 @@ const Header = () => {
 							</span>
 							<span className='cart__icon'>
 								<RiShoppingBagLine className='ri__icon' />
-								<span className='badge'>1</span>
+								<span className='badge'>{totalQuantity}</span>
 							</span>
 							<span>
 								<motion.img whileTap={{ scale: 1.2 }} src={userIcon} alt='User' />

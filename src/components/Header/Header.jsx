@@ -111,7 +111,9 @@ const Header = () => {
 								<span className='badge'>{totalQuantity}</span>
 							</span>
 							<span>
-								<motion.img whileTap={{ scale: 1.2 }} src={userIcon} alt='User' />
+								<Link to='/login'>
+									<motion.img whileTap={{ scale: 1.2 }} src={userIcon} alt='User' />
+								</Link>
 							</span>
 							<div className='mobile__menu'>
 								<span onClick={openMenu}>

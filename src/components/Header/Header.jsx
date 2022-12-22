@@ -8,6 +8,10 @@ import './header.scss';
 import { Container, Row } from 'reactstrap';
 import logo from '../../assets/images/eco-logo.png';
 import userIcon from '../../assets/images/user-icon.png';
+import useAuth from '../../custom-hooks/useAuth.js';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase.config';
+import { toast } from 'react-toastify';
 
 const nav__links = [
 	{
@@ -30,6 +34,8 @@ const Header = () => {
 	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
 	const totalQuantity = useSelector((state) => state.cart.totalQuantity);
+	const { currentUser } = useAuth();
+	const profileActionsRef = useRef(null);
 
 	const openMenu = () => {
 		setOpen(true);
@@ -39,6 +45,17 @@ const Header = () => {
 	const closeMenu = () => {
 		setOpen(false);
 		document.body.classList.remove('no-scroll');
+	};
+
+	const logout = () => {
+		signOut(auth)
+			.then(() => {
+				toast.success('Logged out');
+				navigate('/home');
+			})
+			.catch((err) => {
+				toast.error(err.message);
+			});
 	};
 
 	useEffect(() => {
@@ -76,6 +93,9 @@ const Header = () => {
 	// 	};
 	// }, []);
 
+	const toggleProfileActions = () =>
+		profileActionsRef.current.classList.toggle('show__profileActions');
+
 	return (
 		<header className='header' ref={headerRef}>
 			<Container>
@@ -110,11 +130,28 @@ const Header = () => {
 								<RiShoppingBagLine className='ri__icon' />
 								<span className='badge'>{totalQuantity}</span>
 							</span>
-							<span>
-								<Link to='/login'>
-									<motion.img whileTap={{ scale: 1.2 }} src={userIcon} alt='User' />
-								</Link>
-							</span>
+							<div className='profile'>
+								<motion.img
+									whileTap={{ scale: 1.2 }}
+									src={currentUser ? currentUser.photoURL : userIcon}
+									alt='User'
+									onClick={toggleProfileActions}
+								/>
+
+								<div
+									className='profile__actions'
+									ref={profileActionsRef}
+									onClick={toggleProfileActions}>
+									{currentUser ? (
+										<span onClick={logout}>Logout</span>
+									) : (
+										<div className='d-flex align-items-center justify-content-center flex-column'>
+											<Link to='/signup'>Signup</Link>
+											<Link to='/login'>Login</Link>
+										</div>
+									)}
+								</div>
+							</div>
 							<div className='mobile__menu'>
 								<span onClick={openMenu}>
 									<RiMenuLine className='mobile__menu-icon' />
